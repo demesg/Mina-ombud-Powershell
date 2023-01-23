@@ -10,7 +10,7 @@ if (Get-Module -ListAvailable -Name JWT) {
     #https://github.com/SP3269/posh-jwt
     Install-Module JWT
 }
-$cert = Get-PfxCertificate -FilePath "C:\Magnus\hav_idp_sandbox_exportedCert.pfx" -Password (ConvertTo-SecureString "123456" -AsPlainText -Force)
+$cert = Get-PfxCertificate -FilePath "C:\Magnus\hav_idp_sandbox_exportedCert.pfx" -Password (ConvertTo-SecureString "" -AsPlainText -Force)
 
 $x5u= "https://loginsandbox.havochvatten.se/nidp/oauth/nam/keys"
 $x5= Invoke-RestMethod $x5u -Method GET
