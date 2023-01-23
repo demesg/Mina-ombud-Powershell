@@ -1,8 +1,3 @@
-#https://github.com/anthonyg-1/PSJsonWebToken
-#Install-Module -Name PSJsonWebToken -Repository PSGallery -Scope CurrentUser
-#Import-Module PSJsonWebToken
-
-
 if (Get-Module -ListAvailable -Name JWT) {
     Import-Module JWT
 } else {
