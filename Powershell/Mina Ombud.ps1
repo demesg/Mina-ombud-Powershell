@@ -30,7 +30,7 @@ $Signature=$access_token.split(".")[2]| ConvertFrom-Base64UrlString
 write-host "access_token: " + $access_token -ForegroundColor DarkGreen
 
 $now = Get-Date
-write-host "access_token expire at: $($now.AddSeconds($(($Payload.exp)-($Payload.iat))))"
+write-host "access_token expire at: $($now.AddSeconds($(($Payload.exp)-($Payload.iat))))" -ForegroundColor DarkGreen
 
 if ($($now.AddSeconds($(($Payload.exp)-($Payload.iat)))) -gt $now){
 
@@ -53,7 +53,7 @@ if ($($now.AddSeconds($(($Payload.exp)-($Payload.iat)))) -gt $now){
          "payload"=@{
          sub="95c72b50-ae52-4000-868f-521ec6a75b42";
          iss="$($Payload.iss)";
-         aud=@($Payload.aud);
+         aud="@($Payload.aud)";
          azp="$($client_id)"
          name="Beri Ylles";
          given_name="Beri";
@@ -68,11 +68,14 @@ if ($($now.AddSeconds($(($Payload.exp)-($Payload.iat)))) -gt $now){
     Write-Host "'X-Id-Token'= $($idtoken|ConvertTo-Json)" -ForegroundColor DarkMagenta
 
     #Signera Header och Payload
-    $jwt = New-Jwt -Cert $Cert -Header $($idtoken.header|ConvertTo-Json) -PayloadJson $($idtoken.payload|ConvertTo-Json) -Verbose
+    $jwt = New-Jwt -Cert $Cert -Header $($idtoken.header|ConvertTo-Json) -PayloadJson $($idtoken.payload|ConvertTo-Json)
+    write-host "JWT: $jwt"
+
     write-host "Checking signing of JWT: $($jwt  |Test-Jwt -Cert $cert)"
 
-    Invoke-RestMethod https://fullmakt-test.minaombud.se/dfm/formedlare/v1/sok/behorigheter -Method POST -ContentType "application/json" -Headers @{Authorization="Bearer $token"; 'X-Service-Name'='hav-testapp'; 'X-Id-Token'=$idtoken} -Body ($BeriYlles | ConvertTo-Json)
-
+    $behorigheter = Invoke-RestMethod https://fullmakt-test.minaombud.se/dfm/formedlare/v1/sok/behorigheter -Method POST -ContentType "application/json" -Headers @{Authorization="Bearer $access_token"; 'X-Service-Name'=$client_id; 'X-Id-Token'=$idtoken} -Body ($BeriYlles | ConvertTo-Json)
+    $ErrResp   
+    $behorigheter
    
 } else {
     write-host "access_token has expired"-ForegroundColor Red
